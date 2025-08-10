@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from starlette.responses import JSONResponse
+from starlette.status import HTTP_404_NOT_FOUND
 
 from src.api import routes
 from src.api.deps import get_redis_client
@@ -52,6 +53,7 @@ async def on_startup() -> None:
     logger.info("FastAPI app running...")
 
 
+# CORS configuration - removed wildcard "*" for security
 list_of_domens = [
     "http://localhost",
     "http://localhost:3000",
@@ -60,9 +62,16 @@ list_of_domens = [
     "https://luna-front.ruzibaev.uz",
     "https://lunaterra.vercel.app",
     "https://lunaterra.vercel.app/",
-    "*"
+    # Telegram Web App domains
+    "https://web.telegram.org",
+    "https://t.me",
+    "https://telegram.org",
+    # Additional Telegram Mini App domains
+    "https://lunaterra.netlify.app",
+    "https://lunaterra.netlify.app/",
 ]
 
+# CORS middleware is mounted before any router inclusion
 app.add_middleware(
     CORSMiddleware,
     allow_origins=list_of_domens,
@@ -78,6 +87,13 @@ app.add_middleware(
         "Origin",
         "Access-Control-Request-Method",
         "Access-Control-Request-Headers",
+        "Cache-Control",
+        "Pragma",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "User-Agent",
     ],
     expose_headers=["*"],
 )
@@ -88,7 +104,7 @@ app.include_router(routes.home_router)
 app.include_router(routes.api_router, prefix=f"/{settings.API_PREFIX}")
 
 
-# Error handler
+# Error handler for general HTTP exceptions (без ручной простановки CORS)
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
