@@ -53,14 +53,13 @@ async def on_startup() -> None:
 
 
 list_of_domens = [
-    # "http://localhost",
-    # "http://localhost:3000",
-    # "http://localhost:8000",
-
-    # "https://luna-api.ruzibaev.uz",
-    # "https://luna-front.ruzibaev.uz",
-
-    # "https://lunaterra.vercel.app/",
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "https://luna-api.ruzibaev.uz",
+    "https://luna-front.ruzibaev.uz",
+    "https://lunaterra.vercel.app",
+    "https://lunaterra.vercel.app/",
     "*"
 ]
 
@@ -68,8 +67,19 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=list_of_domens,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_headers=[
+        "Accept",
+        "Accept-Language",
+        "Content-Language",
+        "Content-Type",
+        "Authorization",
+        "X-Requested-With",
+        "Origin",
+        "Access-Control-Request-Method",
+        "Access-Control-Request-Headers",
+    ],
+    expose_headers=["*"],
 )
 
 app.add_event_handler("startup", on_startup)
