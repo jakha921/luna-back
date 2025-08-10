@@ -43,15 +43,15 @@ docker-restart: ## Перезапустить Docker Compose
 
 seed-data: ## Заполнить базу данных тестовыми данными
 	@echo "$(GREEN)Заполнение базы данных тестовыми данными...$(NC)"
-	poetry run python scripts/seed_data.py --users 100
+	docker-compose exec app python scripts/seed_simple.py
 
 seed-data-large: ## Заполнить базу данных большим количеством данных
 	@echo "$(GREEN)Заполнение базы данных большим количеством данных...$(NC)"
-	poetry run python scripts/seed_data.py --users 500
+	docker-compose exec app python scripts/seed_simple.py
 
 seed-data-small: ## Заполнить базу данных небольшим количеством данных
 	@echo "$(GREEN)Заполнение базы данных небольшим количеством данных...$(NC)"
-	poetry run python scripts/seed_data.py --users 50
+	docker-compose exec app python scripts/seed_simple.py
 
 clear-data: ## Очистить базу данных
 	@echo "$(RED)Очистка базы данных...$(NC)"
