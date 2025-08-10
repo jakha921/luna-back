@@ -47,15 +47,12 @@ class UserRepository(BaseSQLAlchemyRepository[User, SUserCreate, SUserUpdate]):
             logger.debug(f"Processing referral for user: {data['referred_by']}")
 
             luna_price = get_luna_price_binance()
+            if luna_price is None or luna_price <= 0:
+                raise ValueError("LUNA price must be positive and non-zero")
 
-            # calc invitation bonus
-            # calculate the bonus based on the current LUNA price add $ 50 to invited user balance
-            logger.debug(f"Current LUNA price: {luna_price}")
-            logger.debug(f"Calculated invitation bonus: {luna_price * 50 * 1000000}")
-
-            # calculate the bonus based on the current LUNA price add $ 50 to invited user balance and add $ 50 to inviter user balance
-            data["invitation_bonus"] = int(luna_price * 50 * 1000000)
-            # add $ 50 to inviter user balance
+            # calculate the bonus: $50 worth of LUNA at current price
+            data["invitation_bonus"] = int((50 / luna_price) * 1000000)
+            # add $50 worth of LUNA to inviter user balance
             inviter_user = await self.get(id=data["referred_by"])
             inviter_user.balance += data["invitation_bonus"]
 

@@ -52,8 +52,14 @@ class Settings(BaseSettings):
 
     # Energy calculation
     DAILY_LIMIT_USD: int = Field(default=30, env="DAILY_LIMIT_USD")
-    SECONDS_MAX_RECHARGE: int = Field(default=10800, env="SECONDS_MAX_RECHARGE")
-    MAX_CLICKS_PER_PARTITION: int = Field(default=1000, env="MAX_CLICKS_PER_PARTITION")
+    SECONDS_MAX_RECHARGE: int = Field(default=10800, env="SECONDS_MAX_RECHARGE")  # 3 hours
+    MAX_CLICKS_PER_PARTITION: int = Field(default=250, env="MAX_CLICKS_PER_PARTITION")
+    
+    # Daily earning limits and partitioning
+    DAILY_EARNING_LIMIT_USD: int = Field(default=30, env="DAILY_EARNING_LIMIT_USD")
+    EARNING_PARTITIONS_COUNT: int = Field(default=6, env="EARNING_PARTITIONS_COUNT")  # 6 parts
+    EARNING_PER_PARTITION_USD: int = Field(default=5, env="EARNING_PER_PARTITION_USD")  # $5 per partition
+    SECONDS_PER_PARTITION: int = Field(default=14400, env="SECONDS_PER_PARTITION")  # 4 hours per partition
 
     @field_validator("POOL_SIZE", mode="before")
     def build_pool(cls, v: Optional[str], values : ValidationInfo) -> Any:
